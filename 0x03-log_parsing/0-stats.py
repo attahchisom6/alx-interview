@@ -1,55 +1,40 @@
 #!/usr/bin/python3
-"""
-script that reads stdin line by line and computes metrics
+"""0-stats module
 """
 import sys
-import re
 
 
-def print_statistics(file_size, Status_Code):
+stats = {
+    '200': 0, '301': 0, '400': 0, '401': 0,
+    '403': 0, '404': 0, '405': 0, '500': 0
+}
+total = 0
+count = 0
+
+
+def print_stats(stats, total):
+    """print_stats function
     """
-    prints the calculated statistics e.g file size
-    to the console
-    """
-    print("File size: {}".format(file_size))
-    for code in sorted(Status_Code.keys()):
-        if Status_Code[code]:
-            print("{}: {}".format(code, Status_Code[code]))
-
-
-def log_parser(Status_Code):
-    """
-    accesses stdin inputs and sieves out information
-    based according to a specified protocol
-    """
-    file_size = 0
-    total_size = 0
-    line_pattern = r'^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) - ' \
-            r'\[.*\] "GET /projects/260 HTTP/1\.1" (\d+) (\d+)$'
-
-    try:
-        for count, line in enumerate(sys.stdin, 1):
-            line = line.strip()
-            match = re.match(line_pattern, line)
-
-            if not match:
-                continue
-
-            status_code = int(match.group(2))
-            file_size = int(match.group(3))
-
-            total_size += file_size
-            Status_Code[status_code] = Status_Code.get(status_code, 0) + 1
-
-            if count % 10 == 0:
-                print_statistics(total_size, Status_Code)
-    except KeyboardInterrupt:
-        print_statistics(total_size, Status_Code)
-        raise
+    print("File size: {}".format(total))
+    for key, value in sorted(stats.items()):
+        if value != 0:
+            print("{}: {}".format(key, value))
 
 
 if __name__ == "__main__":
-    Status_Code = {
-            200: 0, 301: 0, 400: 0, 401: 00, 403: 0, 404: 0, 405: 0, 500: 0
-            }
-    log_parser(Status_Code)
+    try:
+        for line in sys.stdin:
+            data = line.split()
+            if len(data) > 4:
+                status = data[-2]
+                if status in stats.keys():
+                    stats[status] += 1
+                total += int(data[-1])
+                count += 1
+            if count == 10:
+                count = 0
+                print_stats(stats, total)
+    except Exception:
+        pass
+    finally:
+        print_stats(stats, total)
