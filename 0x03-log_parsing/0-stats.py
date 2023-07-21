@@ -15,6 +15,7 @@ def print_statistics(file_size, Status_Code):
     for code in sorted(Status_Code.keys()):
         print("{}: {}".format(code, Status_Code[code]))
 
+
 def log_parser():
     """
     accesses stdin inputs and sieves out information
@@ -24,7 +25,7 @@ def log_parser():
     total_size = 0
     Status_Code = {}
     line_pattern = r'^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) - ' \
-            + '\[.*\] "GET /projects/260 HTTP/1\.1" (\d+) (\d+)$'
+            r'\[.*\] "GET /projects/260 HTTP/1\.1" (\d+) (\d+)$'
 
     try:
         for count, line in enumerate(sys.stdin, 1):
@@ -44,6 +45,7 @@ def log_parser():
                 print_statistics(total_size, Status_Code)
     except KeyboardInterrupt:
         print_statistics(total_size, Status_Code)
+        raise
 
 
 if __name__ == "__main__":
