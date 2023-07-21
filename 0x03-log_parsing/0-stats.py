@@ -6,8 +6,9 @@ import sys
 
 
 Status_Code = {
-        200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0
-        }
+    '200': 0, '301': 0, '400': 0, '401': 0,
+    '403': 0, '404': 0, '405': 0, '500': 0
+}
 total_size = 0
 count = 0
 
@@ -33,12 +34,11 @@ if __name__ == "__main__":
             list_words = line.split()
 
             if len(list_words) > 4:
-                status_code = int(list_words[-2])
+                status_code = list_words[-2]
                 if status_code in Status_Code.keys():
                     Status_Code[status_code] += 1
 
-                file_size = int(list_words[-1])
-                total_size += file_size
+                total_size += int(list_words[-1])
                 count += 1
 
             if count % 10 == 0:
