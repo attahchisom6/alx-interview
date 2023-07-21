@@ -45,6 +45,7 @@ def log_parser():
                 print_statistics(total_size, Status_Code)
     except KeyboardInterrupt:
         print_statistics(total_size, Status_Code)
+        raise
 
 
 if __name__ == "__main__":
