@@ -43,6 +43,7 @@ if __name__ == "__main__":
                 count += 1
 
             if count % 10 == 0:
+                count = 0
                 print_statistics(total_size, Status_Code)
 
     except Exception:
