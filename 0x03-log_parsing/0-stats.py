@@ -38,7 +38,8 @@ if __name__ == "__main__":
                 file_size = int(list_words[-1])
 
                 total_size += file_size
-                Status_Code[status_code] += 1
+                if status_code in Status_Code.keys():
+                    Status_Code[status_code] += 1
                 count += 1
 
             if count % 10 == 0:
