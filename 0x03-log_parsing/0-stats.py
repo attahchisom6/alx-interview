@@ -4,7 +4,7 @@ Script that reads stdin line by line and computes metrics.
 """
 import sys
 import re
-
+import signal
 
 def print_statistics(file_size, Status_Code):
     """
@@ -12,10 +12,9 @@ def print_statistics(file_size, Status_Code):
     to the console.
     """
     print("File size: {}".format(file_size))
-    for code in [200, 301, 400, 401, 403, 404, 405, 500]:
+    for code in sorted(Status_Code.keys()):
         if Status_Code[code]:
             print("{}: {}".format(code, Status_Code[code]))
-
 
 def log_parser():
     """
@@ -25,8 +24,8 @@ def log_parser():
     file_size = 0
     total_size = 0
     Status_Code = {
-            200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 405: 0, 500: 0
-            }
+        200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0
+    }
     line_pattern = r'^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) - ' \
                    r'\[.*\] "GET /projects/260 HTTP/1\.1" (\d+) (\d+)$'
 
@@ -46,10 +45,12 @@ def log_parser():
 
             if count % 10 == 0:
                 print_statistics(total_size, Status_Code)
+
     except KeyboardInterrupt:
         print_statistics(total_size, Status_Code)
-        raise
-
+        sys.exit(0)  # Exit gracefully on Ctrl+C
 
 if __name__ == "__main__":
+    # Setup a signal handler for SIGINT (Ctrl+C)
+    signal.signal(signal.SIGINT, lambda signal, frame: sys.exit(0))
     log_parser()
