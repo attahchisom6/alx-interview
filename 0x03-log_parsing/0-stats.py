@@ -23,7 +23,9 @@ def log_parser():
     """
     file_size = 0
     total_size = 0
-    Status_Code = {}
+    Status_Code = {
+            200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0
+            }
     line_pattern = r'^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) - ' \
                    r'\[.*\] "GET /projects/260 HTTP/1\.1" (\d+) (\d+)$'
 
