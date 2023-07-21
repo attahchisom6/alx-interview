@@ -13,17 +13,17 @@ def print_statistics(file_size, Status_Code):
     """
     print("File size: {}".format(file_size))
     for code in sorted(Status_Code.keys()):
-        print("{}: {}".format(code, Status_Code[code]))
+        if Status_Code[code]:
+            print("{}: {}".format(code, Status_Code[code]))
 
 
-def log_parser():
+def log_parser(Status_Code):
     """
     accesses stdin inputs and sieves out information
     based according to a specified protocol
     """
     file_size = 0
     total_size = 0
-    Status_Code = {}
     line_pattern = r'^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) - ' \
             r'\[.*\] "GET /projects/260 HTTP/1\.1" (\d+) (\d+)$'
 
@@ -49,4 +49,7 @@ def log_parser():
 
 
 if __name__ == "__main__":
-    log_parser()
+    Status_Code = {
+            200: 0, 301: 0, 400: 0, 401: 00, 403: 0, 404: 0, 405: 0, 500: 0
+            }
+    log_parser(Status_Code)
