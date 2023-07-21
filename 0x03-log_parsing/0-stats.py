@@ -23,6 +23,7 @@ def print_statistics(file_size, Status_Code):
         if value != 0:
             print("{}: {}".format(code, value))
 
+
 if __name__ == "__main__":
     """
     Accesses stdin inputs and sieves out information
