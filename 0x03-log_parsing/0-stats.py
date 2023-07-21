@@ -31,7 +31,7 @@ if __name__ == "__main__":
     """
     try:
         for line in sys.stdin:
-            list_words = line.strip().split(" ")
+            list_words = line.split(" ")
 
             if len(list_words) > 4:
                 status_code = int(list_words[-2])
