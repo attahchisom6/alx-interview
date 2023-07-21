@@ -3,8 +3,15 @@
 Script that reads stdin line by line and computes metrics.
 """
 import sys
-import re
-import signal
+
+
+Status_Code = {
+        200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0
+        }
+total_size = 0
+file_size = 0
+count = 0
+
 
 def print_statistics(file_size, Status_Code):
     """
@@ -12,45 +19,31 @@ def print_statistics(file_size, Status_Code):
     to the console.
     """
     print("File size: {}".format(file_size))
-    for code in sorted(Status_Code.keys()):
-        if Status_Code[code]:
-            print("{}: {}".format(code, Status_Code[code]))
+    for code, value in sorted(Status_Code.items()):
+        if value != 0:
+            print("{}: {}".format(code, value))
 
-def log_parser():
+if __name__ == "__main__":
     """
     Accesses stdin inputs and sieves out information
     based on a specified protocol.
     """
-    file_size = 0
-    total_size = 0
-    Status_Code = {
-        200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0
-    }
-    line_pattern = r'^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) - ' \
-                   r'\[.*\] "GET /projects/260 HTTP/1\.1" (\d+) (\d+)$'
-
     try:
-        for count, line in enumerate(sys.stdin, 1):
-            line = line.strip()
-            match = re.match(line_pattern, line)
+        for line in sys.stdin:
+            list_words = line.strip().split(" ")
 
-            if not match:
-                continue
+            if len(list_words) > 4:
+                status_code = int(list_words[-2])
+                file_size = int(list_words[-1])
 
-            status_code = int(match.group(2))
-            file_size = int(match.group(3))
-
-            total_size += file_size
-            Status_Code[status_code] = Status_Code.get(status_code, 0) + 1
+                total_size += file_size
+                Status_Code[status_code] += 1
+                count += 1
 
             if count % 10 == 0:
                 print_statistics(total_size, Status_Code)
 
-    except KeyboardInterrupt:
+    except Exception:
+        pass
+    finally:
         print_statistics(total_size, Status_Code)
-        sys.exit(0)  # Exit gracefully on Ctrl+C
-
-if __name__ == "__main__":
-    # Setup a signal handler for SIGINT (Ctrl+C)
-    signal.signal(signal.SIGINT, lambda signal, frame: sys.exit(0))
-    log_parser()
