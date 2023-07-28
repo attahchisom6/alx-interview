@@ -14,7 +14,7 @@ def validUTF8(data: List[int]) -> bool:
     num_bytes = 0
 
     for num in data:
-        # get the least significant bits of each number
+        # get the least 8 significant bits of each number
         num = num & 0xFF
         # check if the current num represent the start of a new character
         # in utf-8 encoded format
@@ -24,15 +24,15 @@ def validUTF8(data: List[int]) -> bool:
                 num_bytes = 0
 
             elif num >> 5 == 0b110:
-                # then its a 2 byte code
+                # then its a 2 byte character
                 num_bytes = 1
 
             elif num >> 4 == 0b1110:
-                # its a 3 byte code point
-                num_bytes = 4
+                # its a 3 byte character
+                num_bytes = 2
 
             elif num >> 3 == 0b11110:
-                # its a 4 byte code point
+                # its a 4 byte character/code point
                 num_bytes = 3
 
             else:
