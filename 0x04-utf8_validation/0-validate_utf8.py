@@ -44,4 +44,6 @@ def validUTF8(data: List[int]) -> bool:
                 return False
             num_bytes -= 1
 
+    # if we have encoded all the bytes for a character,  there will be
+    # nothing else to encode so we return the initial value of the byte tracker
     return num_bytes == 1
