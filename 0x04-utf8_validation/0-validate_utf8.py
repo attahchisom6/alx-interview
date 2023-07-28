@@ -1,12 +1,13 @@
 #!/usr/bin/python3
 """
-good fine good
+Script to check if a bytes supports or can be encoded into utf-8 format
 """
+from typing import List
 
 
-def validUTF8(data):
+def validUTF8(data: List) -> bool:
     """
-    calidating utf-8
+    vaalidating items in the data list if they areutf-8 encodable
     """
     num_bytes = 0
 
