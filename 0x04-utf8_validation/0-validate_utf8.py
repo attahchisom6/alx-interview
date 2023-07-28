@@ -25,11 +25,11 @@ def validUTF8(data: List[int]) -> bool:
 
             elif num >> 5 == 0b110:
                 # then its a 2 byte character
-                num_bytes = 3
+                num_bytes = 2
 
             elif num >> 4 == 0b1110:
                 # its a 3 byte character
-                num_bytes = 2
+                num_bytes = 3
 
             elif num >> 3 == 0b11110:
                 # its a 4 byte character/code point
