@@ -1,36 +1,49 @@
 #!/usr/bin/python3
-"""UTF-8 Validation Module
 """
+Sccript to check if the unicodes of a given set of integers is
+encodable to utf-8 format
+"""
+from typing import List
 
 
-def validUTF8(data):
-    """Determines if a given data set represents a valid UTF-8 encoding.
-
-    Args:
-        data (list): list of integers
-
-    Returns:
-        bool: True if data is a valid UTF-8 encoding, else return False
+def validUTF8(data: List[int]) -> bool:
     """
-    n_bytes = 0
+    check if integers in the data list are utf-8 encodable
+    """
+    # take track of the bytes required to encode the current code point
+    num_bytes = 1
 
     for num in data:
-        byte = num & 0xff
-        if n_bytes == 0:
-            mask1 = 1 << 7
-            mask2 = 1 << 6
-            while mask1 & byte:
-                n_bytes += 1
-                mask1 = mask1 >> 1
-                mask2 = mask2 >> 1
-            if n_bytes == 0:
-                continue
-            if n_bytes == 1 or n_bytes > 4:
+        # get the least 8 significant bits of each number
+        num = num & 0xFF
+        # check if the current num represent the start of a new character
+        # in utf-8 encoded format
+        if num_bytes == 1:
+            if num >> 7 == 0:
+                # then its a single byte character
+                num_bytes = 1
+
+            elif num >> 5 == 0b110:
+                # then its a 2 byte character
+                num_bytes = 2
+
+            elif num >> 4 == 0b1110:
+                # its a 3 byte character
+                num_bytes = 3
+
+            elif num >> 3 == 0b11110:
+                # its a 4 byte character/code point
+                num_bytes = 4
+
+            else:
                 return False
+
+        # check if the continuation byte havr 10 as its initial
         else:
-            mask1 = 1 << 7
-            mask2 = 1 << 6
-            if not (byte & mask1 and not (byte & mask2)):
+            if num >> 6 != 0b10:
                 return False
-        n_bytes -= 1
-    return n_bytes == 0
+            num_bytes -= 1
+
+    # if we have encoded all the bytes for a character,  there will be
+    # nothing else to encode so we return the initial value of the byte tracker
+    return num_bytes == 1
