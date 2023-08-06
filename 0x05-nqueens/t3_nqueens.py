@@ -75,7 +75,8 @@ def solve_nqueens(board, col, N):
 
 def nqueens(N):
     """
-    this function solves the queen to any given number or size of the chessboard
+    this function solves the queen to any given number or size of
+    the chessboard
     """
     board = [[0 for _ in range(N)] for _ in range(N)]
     solutions = []
