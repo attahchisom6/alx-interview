@@ -2,10 +2,10 @@
 
 // this script printcharacter name from the api in the order in which they  fill the response list
 const request = require("request");
-async function getMovieName(movieId) {
+async function getMovieNames(movieId) {
   const url = `https://swapi.dev/api/films/${movieId}`;
 
-  return new Promise((reject, resolve) => {
+  return new Promise((resolve, reject) => {
     request(url, (error, response, body) => {
       if (error) {
         reject(error);
@@ -15,7 +15,7 @@ async function getMovieName(movieId) {
       const characters = data.characters;
 
       const promiseCharacterArray = characters.map(charUrl => {
-        return new Promise((charReject, charResolve) => {
+        return new Promise((charResolve, charReject) => {
           request(charUrl, (charError, charResponse, charBody) => {
             if (charError) {
               charReject(charError);
@@ -24,22 +24,22 @@ async function getMovieName(movieId) {
             resolve(charData.name)
           });
         });
+      });
 
-        Promise.all(promiseCharacterArray)
-        .then(characterNames => {
-          resolve(characterNames);
-        })
-        .catch(error) {
-          console.error(error);
-        }
+      Promise.all(promiseCharacterArray)
+      .then(characterNames => {
+        resolve(characterNames);
       })
-    })
-  })
-});
+      .catch(error => {
+        console.error(error);
+      });
+    });
+  });
+};
 
-const movieId = sys.argv[2]
-if (!movie) {
-  console.log(`Usage: node ${sys.argv[1]} <number>`);
+const movieId = process.argv[2]
+if (!movieId) {
+  console.log(`Usage: node ${process.argv[1]} <number>`);
 } else {
   getMovieNames(movieId)
   .then(characterNames => {
@@ -47,7 +47,7 @@ if (!movie) {
       console.log(name);
     })
   })
-  .catch(error) {
+  .catch(error => {
     console.error(error);
-  }
+  });
 }
