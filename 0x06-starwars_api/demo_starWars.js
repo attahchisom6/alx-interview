@@ -4,7 +4,7 @@
 
 const request = require('request');
 
-async function getMovieNames(movieId) {
+async function getMovieNames (movieId) {
   const url = `https://swapi.dev/api/films/${movieId}`;
 
   return new Promise((resolve, reject) => {
@@ -24,34 +24,38 @@ async function getMovieNames(movieId) {
               charReject(charError);
               return;
             }
-            charData = JSON.parse(charBody);
+            const charData = JSON.parse(charBody);
             charResolve(charData.name);
           });
         });
       });
 
       Promise.all(promiseCharacterArray)
-      .then(characterNames => {
-        resolve(characterNames);
-      })
-      .catch(error => {
-        reject(error);
-      });
+        .then(characterNames => {
+          resolve(characterNames);
+        })
+        .catch(error => {
+          reject(error);
+        });
     });
   });
 }
 
-const movieId = process.argv[2]
+const movieId = process.argv[2];
 if (!movieId) {
-  console.log(`Usage: node ${process.argv[1]} <number>`);
+  const path = require('path');
+  const absolutePath = process.argv[1];
+  const fileName = path.basename(absolutePath);
+
+  console.log(`Usage: node ${fileName} <number>`);
 } else {
   getMovieNames(movieId)
-  .then(characterNames => {
-    characterNames.forEach(name => {
-      console.log(name);
+    .then(characterNames => {
+      characterNames.forEach(name => {
+        console.log(name);
+      });
+    })
+    .catch(error => {
+      console.error(error);
     });
-  })
-  .catch(error => {
-    console.error(error);
-  });
 }
