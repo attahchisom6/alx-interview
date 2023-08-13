@@ -1,28 +1,30 @@
 #!/usr/bin/node
 
-
-// this script prints character name from the api in the order in which they  fill the response list
+// script fetch names of actors from a film starwars api in rhe order in which they fill in the response list
 
 const request = require('request');
+
 async function getMovieNames(movieId) {
   const url = `https://swapi.dev/api/films/${movieId}`;
 
   return new Promise((resolve, reject) => {
-    if (error) {
-      reject(error);
-    }
+    request(url, (error, response, body) => {
+      if (error) {
+        reject(error);
+        return;
+      }
 
-    require(url, (error, response, body) => {
       const data = JSON.parse(body);
       const characters = data.characters;
 
-      const promiseCharacterArray = await characters.map(charUrl => {
-        return new Promise((charReject, charResolve) => {
+      const promiseCharacterArray = characters.map(charUrl => {
+        return new Promise((charResolve, charReject) => {
           request(charUrl, (charError, charResponse, charBody) => {
             if (charError) {
-              charResolve(charError);
+              charReject(charError);
+              return;
             }
-            charData = JSON.parse(body);
+            charData = JSON.parse(charBody);
             charResolve(charData.name);
           });
         });
@@ -33,7 +35,7 @@ async function getMovieNames(movieId) {
         resolve(characterNames);
       })
       .catch(error => {
-        console.error(error);
+        reject(error);
       });
     });
   });
@@ -43,12 +45,12 @@ const movieId = process.argv[2]
 if (!movieId) {
   console.log(`Usage: node ${process.argv[1]} <number>`);
 } else {
-  await getMovieNames(movieId)
-    .then(characterNames => {
+  getMovieNames(movieId)
+  .then(characterNames => {
     characterNames.forEach(name => {
       console.log(name);
     });
-  });
+  })
   .catch(error => {
     console.error(error);
   });
