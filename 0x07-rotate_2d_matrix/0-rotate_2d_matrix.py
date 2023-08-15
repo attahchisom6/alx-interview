@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 A program to rotate a matrix 90 degree clockwisely, we achieve this by
 1. interate through the row and column of the matrix, then set the element at
