@@ -1,28 +1,61 @@
 #!/usr/bin/node
+
+// script fetch names of actors from a film starwars api in rhe order in which they fill in the response list
+
 const request = require('request');
 
-const url = 'https://swapi-api.hbtn.io/api/films/' + process.argv[2];
+async function getMovieNames (movieId) {
+  const url = `https://swapi.dev/api/films/${movieId}`;
 
-request(url, (err, res, body) => {
-  if (err) {
-    console.log(err);
-  }
-  const characters = JSON.parse(body).characters;
-  const promises = characters.map((character) => {
-    return new Promise((resolve, reject) => {
-      request(character, (err, res, body) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(JSON.parse(body).name);
+  return new Promise((resolve, reject) => {
+    request(url, (error, response, body) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+
+      const data = JSON.parse(body);
+      const characters = data.characters;
+
+      const promiseCharacterArray = characters.map(charUrl => {
+        return new Promise((resolve, reject) => {
+          request(charUrl, (charError, charResponse, charBody) => {
+            if (charError) {
+              reject(charError);
+              return;
+            }
+            const charData = JSON.parse(charBody);
+            resolve(charData.name);
+          });
+        });
       });
+
+      Promise.all(promiseCharacterArray)
+        .then(characterNames => {
+          resolve(characterNames);
+        })
+        .catch(error => {
+          reject(error);
+        });
     });
-  }
-  );
-  Promise.all(promises).then((names) => {
-    names.forEach((name) => {
-      console.log(name);
+  });
+}
+
+const movieId = process.argv[2];
+if (!movieId) {
+  const path = require('path');
+  const absolutePath = process.argv[1];
+  const fileName = path.basename(absolutePath);
+
+  console.log(`Usage: node ${fileName} <number>`);
+} else {
+  getMovieNames(movieId)
+    .then(characterNames => {
+      characterNames.forEach(name => {
+        console.log(name);
+      });
+    })
+    .catch(error => {
+      console.error(error);
     });
-  }
-  );
-});
+}
