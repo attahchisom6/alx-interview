@@ -20,26 +20,27 @@ def isWinner(x, nums):
         if num <= 1:
             return False
 
-        for k in range(2, num + 1):
+        for k in range(2, int(n ** 0.5) + 1):
             if num % k == 0:
                 return False
         return True
 
-    winner_list = [None] * (len(nums) + 1)
+    winner_list = [None] * x
 
     if nums is None or nums == []:
         return None
     if x is None or x == 0:
         return None
 
-    for n in range(x):
-        if winner_list[n] is not None:
-            continue
+    for k in range(x):
+        n = nums[k]
 
-        if is_prime(n):
-            winner_list[n] = "Maria"
+        prime_list = [p for p in range(2, n + 1) if is_prime(p)]
+
+        if len(prime_list) % 2 != 0:
+            winner_list[k] = "Maria"
         else:
-            winner_list[n] = "Ben"
+            winner_list[k] = "Ben"
 
     Maria_wins = winner_list.count('Maria')
     Ben_wins = winner_list.count('Ben')
