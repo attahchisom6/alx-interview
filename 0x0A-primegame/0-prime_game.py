@@ -1,53 +1,61 @@
 #!/usr/bin/python3
+"""0-prime_game module
 """
-A prime game
-"""
+
+
+def isPrime(n):
+    """determine if a number is prime
+
+    Args:
+        n (int): number to check
+
+    Returns:
+        bool: True if n is prime, False
+    """
+    if n < 2:
+        return False
+    for i in range(2, n):
+        if n % i == 0 and i != n:
+            return False
+    return True
+
+
+def primes(n):
+    """return a list of prime numbers
+
+    Args:
+        n (int): number to check
+
+    Returns:
+        list: list of prime numbers
+    """
+    prime = []
+    for i in range(2, n + 1):
+        if isPrime(i) and i ** 2 not in prime:
+            prime.append(i)
+    return prime
 
 
 def isWinner(x, nums):
+    """determine whoo the winner of each game is
+
+    Args:
+        x (int): number of rounds
+        nums (list[int]): array of n
+
+    Returns:
+        str: name of the player that won the most rounds
     """
-    A game where Maria and Ben start oy pick a prime number and then removing
-    mutiples of the prime number
-    the first to have no more prime number to choose looses out
-    @params:
-        @x: Number of rounds played by both friends
-        @nums: a list of n, for each round
-    """
-    def is_prime(num):
-        """
-        checks  if num is a prime
-        """
-        if num <= 1:
-            return False
-
-        for k in range(2, int(n ** 0.5) + 1):
-            if num % k == 0:
-                return False
-        return True
-
-    winner_list = [None] * x
-
-    if nums is None or nums == []:
+    if x is None or nums is None or x == 0 or nums == []:
         return None
-    if x is None or x == 0:
-        return None
-
-    for k in range(x):
-        n = nums[k]
-
-        prime_list = [p for p in range(2, n + 1) if is_prime(p)]
-
-        if len(prime_list) % 2 != 0:
-            winner_list[k] = "Maria"
+    maria, ben = 0, 0
+    for i in range(x):
+        prime = primes(nums[i])
+        if len(prime) % 2 == 0:
+            ben += 1
         else:
-            winner_list[k] = "Ben"
-
-    Maria_wins = winner_list.count('Maria')
-    Ben_wins = winner_list.count('Ben')
-
-    if Maria_wins > Ben_wins:
-        return "Maria"
-    elif Ben_wins > Maria_wins:
-        return "Ben"
-    else:
+            maria += 1
+    if ben == maria:
         return None
+
+    return "Maria" if maria > ben else "Ben"
